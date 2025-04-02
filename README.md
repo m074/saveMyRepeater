@@ -1,8 +1,7 @@
 # saveMyRepeater
 saveMyRepeater is a Burp Suite Community extension that allows users to save and restore selected Repeater requests.
 
-![image](https://github.com/user-attachments/assets/0e6fe8c7-559c-4aed-bd97-f036ca932f98)
-
+![image](https://github.com/user-attachments/assets/b8273c64-8347-40c9-aefe-64427c27dfb0)
 
 # Installation
 
@@ -19,13 +18,17 @@ saveMyRepeater is a Burp Suite Community extension that allows users to save and
 - Go to to the saveMyRepeater tab
 - Select the directory where you want to save the tab file; the default is ```.```
 - Go to the repeater tab you want to save.
-- Press left-click -> Extensions -> saveMyRepeater -> Save this repeater tab
-- Define the name of the tab to save 
+- Press right-click -> Extensions -> saveMyRepeater -> Save this repeater tab
 
+![image](https://github.com/user-attachments/assets/61c059ae-5434-432f-9ec8-0bb46b8d8e66)
+
+- Define the name of the tab to save
+
+![image](https://github.com/user-attachments/assets/b56775bd-741d-4018-a25c-0f76bd27c8ee)
 
 ### Load a repeater tab
 - Go to to the saveMyRepeater tab
-- Select the directory where you want to save the tab file; the default is ```.```
+- Select the directory where you want to load the tab file; the default is ```.```
 - Select the repeater file you want to load
 - Click "Load the repeater tab"
 
@@ -33,7 +36,7 @@ saveMyRepeater is a Burp Suite Community extension that allows users to save and
 The plugin cannot load the response content into the repeater, so it can only be provided by pasting it into the clipboard.
 
 - Go to to the saveMyRepeater tab
-- Select the directory where you want to save the tab file; the default is ```.```
+- Select the directory where you want to load the tab file; the default is ```.```
 - Select the repeater file you want to copy the saved response
 - Click "Copy to the clipboard the response"
 
