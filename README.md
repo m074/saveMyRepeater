@@ -1,5 +1,6 @@
 # saveMyRepeater
 saveMyRepeater is a Burp Suite Community extension that allows users to save and restore selected Repeater requests.
+
 ![image](https://github.com/user-attachments/assets/0e6fe8c7-559c-4aed-bd97-f036ca932f98)
 
 
@@ -35,3 +36,17 @@ The plugin cannot load the response content into the repeater, so it can only be
 - Select the directory where you want to save the tab file; the default is ```.```
 - Select the repeater file you want to copy the saved response
 - Click "Copy to the clipboard the response"
+
+
+## How it works
+The application saves a JSON file in the selected directory with the name of the repeater tab, using the following format:
+````
+{
+    "request": {request enconded in base64},
+    "tabName": {repeater tab name}, 
+    "protocol": {protocol}, 
+    "port": {port}, 
+    "response": {response enconded in base64}, 
+    "host": {host}
+}
+````
