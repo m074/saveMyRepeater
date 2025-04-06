@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 
 from burp import IBurpExtender, IContextMenuFactory, IExtensionStateListener, ITab
-from java.awt import FlowLayout, Toolkit
+from java.awt import BorderLayout, FlowLayout, Toolkit
 from java.awt.datatransfer import StringSelection
 from javax.swing import (
     BorderFactory,
@@ -24,11 +24,9 @@ from javax.swing import (
 class saveMyRepeaterTab(ITab):
     def __init__(self, callbacks):
         self._callbacks = callbacks
-
         self.directory = "."
 
-        self.panel = JPanel()
-        self.panel.setLayout(BoxLayout(self.panel, BoxLayout.Y_AXIS))
+        self.panel = JPanel(BorderLayout())
         self.load_function = lambda path_file: None
         self.response_function = lambda path_file: None
 
@@ -41,34 +39,35 @@ class saveMyRepeaterTab(ITab):
         self.directory_path.setEditable(False)
         self.directory_path.setText(self.directory)
         self.list_files(self.directory)
-        self.directory_path.setBorder(BorderFactory.createTitledBorder("Selected folder"))
-        self.directory_path.setMaximumSize(self.directory_path.getPreferredSize())
+        self.directory_path.setBorder(
+            BorderFactory.createTitledBorder("Selected folder")
+        )
 
-        self.select_button = JButton("Select folder", actionPerformed=self.choose_directory)
+        self.select_button = JButton(
+            "Select folder", actionPerformed=self.choose_directory
+        )
 
         dir_panel = JPanel()
         dir_panel.setLayout(BoxLayout(dir_panel, BoxLayout.LINE_AXIS))
         dir_panel.add(self.directory_path)
         dir_panel.add(Box.createHorizontalStrut(10))
         dir_panel.add(self.select_button)
-        dir_panel.setMaximumSize(dir_panel.getPreferredSize())
 
-        action_panel = JPanel()
-        action_panel.setLayout(FlowLayout())
-
-        self.load_button = JButton("Load the repeater tab", actionPerformed=self.load_button_action)
+        action_panel = JPanel(FlowLayout())
+        self.load_button = JButton(
+            "Load the repeater tab", actionPerformed=self.load_button_action
+        )
         self.response_button = JButton(
-            "Copy to the clipboard the response", actionPerformed=self.response_button_action
+            "Copy to the clipboard the response",
+            actionPerformed=self.response_button_action,
         )
 
         action_panel.add(self.load_button)
         action_panel.add(self.response_button)
 
-        self.panel.add(dir_panel)
-        self.panel.add(self.directory_path)
-        self.panel.add(self.select_button)
-        self.panel.add(scroll_pane)
-        self.panel.add(action_panel)
+        self.panel.add(dir_panel, BorderLayout.NORTH)
+        self.panel.add(scroll_pane, BorderLayout.CENTER)
+        self.panel.add(action_panel, BorderLayout.SOUTH)
 
         self._callbacks.addSuiteTab(self)
 
@@ -140,7 +139,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
                 req = json.load(f)
 
             request_bytes = self._helpers.base64Decode(req["request"])
-            http_service = self._helpers.buildHttpService(req["host"], req["port"], req["protocol"])
+            http_service = self._helpers.buildHttpService(
+                req["host"], req["port"], req["protocol"]
+            )
             self._callbacks.sendToRepeater(
                 http_service.getHost(),
                 http_service.getPort(),
@@ -161,7 +162,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
 
             response = self._helpers.base64Decode(req["response"])
             selection = StringSelection(response.tostring())
-            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(selection, None)
+            Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
+                selection, None
+            )
             print("Copied to clipboard the repeater response: " + save_file)
 
         except Exception as e:
@@ -176,9 +179,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
             "host": entry.getHttpService().getHost(),
             "port": entry.getHttpService().getPort(),
             "protocol": entry.getHttpService().getProtocol(),
-            "request": self._helpers.base64Encode(entry.getRequest().tostring()).decode("ascii"),
+            "request": self._helpers.base64Encode(entry.getRequest().tostring()),
             "response": (
-                self._helpers.base64Encode(entry.getResponse().tostring()).decode("ascii")
+                self._helpers.base64Encode(entry.getResponse().tostring())
                 if entry.getResponse()
                 else ""
             ),
@@ -187,7 +190,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
         filename = tab_name + ".json"
         absolute_path_file = self.tab.get_absolute_path_file(filename)
         if os.path.exists(absolute_path_file):
-            filename = tab_name + "__" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".json"
+            filename = (
+                tab_name + "__" + datetime.now().strftime("%Y%m%d_%H%M%S") + ".json"
+            )
         absolute_path_file = self.tab.get_absolute_path_file(filename)
         try:
             with open(absolute_path_file, "w") as f:
