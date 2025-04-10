@@ -24,17 +24,19 @@ from javax.swing import (
 class saveMyRepeaterTab(ITab):
     def __init__(self, callbacks):
         self._callbacks = callbacks
-        self.directory = "."
 
-        self.panel = JPanel(BorderLayout())
+        self.directory = "."
         self.load_function = lambda path_file: None
         self.response_function = lambda path_file: None
+
+        self.panel = JPanel(BorderLayout())
 
         self.list_model = DefaultListModel()
         self.file_list = JList(self.list_model)
         scroll_pane = JScrollPane(self.file_list)
         scroll_pane.setBorder(BorderFactory.createTitledBorder("Repeater files"))
 
+        dir_panel = JPanel()
         self.directory_path = JTextField(50)
         self.directory_path.setEditable(False)
         self.directory_path.setText(self.directory)
@@ -46,8 +48,6 @@ class saveMyRepeaterTab(ITab):
         self.select_button = JButton(
             "Select folder", actionPerformed=self.choose_directory
         )
-
-        dir_panel = JPanel()
         dir_panel.setLayout(BoxLayout(dir_panel, BoxLayout.LINE_AXIS))
         dir_panel.add(self.directory_path)
         dir_panel.add(Box.createHorizontalStrut(10))
@@ -61,7 +61,6 @@ class saveMyRepeaterTab(ITab):
             "Copy to the clipboard the response",
             actionPerformed=self.response_button_action,
         )
-
         action_panel.add(self.load_button)
         action_panel.add(self.response_button)
 
@@ -153,7 +152,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
             print("Loaded the repeater tab: " + save_file)
 
         except Exception as e:
-            JOptionPane.showMessageDialog(None, "Failed to load the tab: " + str(e))
+            JOptionPane.showMessageDialog(None, "Failed to load the tab: " + repr(e))
 
     def copy_repeater_response(self, save_file):
         try:
@@ -161,6 +160,9 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
                 req = json.load(f)
 
             response = self._helpers.base64Decode(req["response"])
+            if not response:
+                JOptionPane.showMessageDialog(None, "The response body is empty")
+                return
             selection = StringSelection(response.tostring())
             Toolkit.getDefaultToolkit().getSystemClipboard().setContents(
                 selection, None
@@ -168,11 +170,10 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
             print("Copied to clipboard the repeater response: " + save_file)
 
         except Exception as e:
-            JOptionPane.showMessageDialog(None, "Failed to load the tab: " + str(e))
+            JOptionPane.showMessageDialog(None, "Failed to load the tab: " + repr(e))
 
     def _save_repeater_tab(self, tab_name):
-        repeaters = self._invocation.getSelectedMessages()
-        entry = repeaters[0]
+        entry = self._invocation.getSelectedMessages()[0]
 
         request_data = {
             "tabName": tab_name,
@@ -186,7 +187,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
                 else ""
             ),
         }
-
         filename = tab_name + ".json"
         absolute_path_file = self.tab.get_absolute_path_file(filename)
         if os.path.exists(absolute_path_file):
@@ -200,17 +200,17 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
             print("Repeater tab saved:" + absolute_path_file)
 
         except Exception as e:
-            JOptionPane.showMessageDialog(None, "Failed to save the tab: " + str(e))
+            JOptionPane.showMessageDialog(None, "Failed to save the tab: " + repr(e))
         self.tab.list_files(self.tab.directory)
 
     def createMenuItems(self, invocation):
         self._invocation = invocation
         menu = []
-        save_item = JMenuItem("Save this repeater tab", actionPerformed=self.on_save)
+        save_item = JMenuItem("Save this repeater tab", actionPerformed=self._on_save)
         menu.append(save_item)
         return menu
 
-    def on_save(self, event):
+    def _on_save(self, event):
         tab_name = JOptionPane.showInputDialog("Enter a name for the repeater tab")
         self._save_repeater_tab(tab_name)
 
