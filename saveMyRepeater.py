@@ -68,8 +68,6 @@ class saveMyRepeaterTab(ITab):
         self.panel.add(scroll_pane, BorderLayout.CENTER)
         self.panel.add(action_panel, BorderLayout.SOUTH)
 
-        self._callbacks.addSuiteTab(self)
-
     def choose_directory(self, event):
         chooser = JFileChooser()
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY)
