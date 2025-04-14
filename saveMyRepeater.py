@@ -82,7 +82,7 @@ class saveMyRepeaterTab(ITab):
 
     def list_files(self, directory):
         self.list_model.clear()
-        for file in os.listdir(directory):
+        for file in sorted(os.listdir(directory)):
             if file.endswith(".json"):
                 self.list_model.addElement(file[:-5])
 
