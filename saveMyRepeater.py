@@ -44,7 +44,6 @@ class saveMyRepeaterTab(ITab):
         self.directory_path.setBorder(
             BorderFactory.createTitledBorder("Selected folder")
         )
-
         self.select_button = JButton(
             "Select folder", actionPerformed=self.choose_directory
         )
@@ -134,7 +133,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
         try:
             with open(save_file, "r") as f:
                 req = json.load(f)
-
             request_bytes = self._helpers.base64Decode(req["request"])
             http_service = self._helpers.buildHttpService(
                 req["host"], req["port"], req["protocol"]
@@ -146,9 +144,7 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
                 request_bytes,
                 req["tabName"],
             )
-
             print("Loaded the repeater tab: " + save_file)
-
         except Exception as e:
             JOptionPane.showMessageDialog(None, "Failed to load the tab: " + repr(e))
 
@@ -156,7 +152,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
         try:
             with open(save_file, "r") as f:
                 req = json.load(f)
-
             response = self._helpers.base64Decode(req["response"])
             if not response:
                 JOptionPane.showMessageDialog(None, "The response body is empty")
@@ -166,13 +161,11 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
                 selection, None
             )
             print("Copied to clipboard the repeater response: " + save_file)
-
         except Exception as e:
             JOptionPane.showMessageDialog(None, "Failed to load the tab: " + repr(e))
 
     def _save_repeater_tab(self, tab_name):
         entry = self._invocation.getSelectedMessages()[0]
-
         request_data = {
             "tabName": tab_name,
             "host": entry.getHttpService().getHost(),
@@ -196,7 +189,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
             with open(absolute_path_file, "w") as f:
                 json.dump(request_data, f, indent=4)
             print("Repeater tab saved:" + absolute_path_file)
-
         except Exception as e:
             JOptionPane.showMessageDialog(None, "Failed to save the tab: " + repr(e))
         self.tab.list_files(self.tab.directory)
