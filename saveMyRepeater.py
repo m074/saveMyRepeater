@@ -108,9 +108,6 @@ class saveMyRepeaterTab(ITab):
     def getUiComponent(self):
         return self.panel
 
-    def setExtender(self, extender):
-        self.extender = extender
-
 
 class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
     def registerExtenderCallbacks(self, callbacks):
@@ -122,7 +119,6 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
         self._invocation = None
 
         self.tab = saveMyRepeaterTab(callbacks)
-        self.tab.setExtender(self)
         self.tab.load_function = self.load_repeater_tab
         self.tab.response_function = self.copy_repeater_response
         callbacks.addSuiteTab(self.tab)
