@@ -2,7 +2,7 @@ import json
 import os
 from datetime import datetime
 
-from burp import IBurpExtender, IContextMenuFactory, IExtensionStateListener, ITab
+from burp import IBurpExtender, IContextMenuFactory, ITab
 from java.awt import BorderLayout, FlowLayout, Toolkit
 from java.awt.datatransfer import StringSelection
 from javax.swing import (
@@ -109,12 +109,11 @@ class saveMyRepeaterTab(ITab):
         return self.panel
 
 
-class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
+class BurpExtender(IBurpExtender, IContextMenuFactory):
     def registerExtenderCallbacks(self, callbacks):
         self._callbacks = callbacks
         self._helpers = callbacks.getHelpers()
         self._callbacks.setExtensionName("saveMyRepeater")
-        self._callbacks.registerExtensionStateListener(self)
         self._callbacks.registerContextMenuFactory(self)
         self._invocation = None
 
@@ -199,6 +198,3 @@ class BurpExtender(IBurpExtender, IExtensionStateListener, IContextMenuFactory):
     def _on_save(self, event):
         tab_name = JOptionPane.showInputDialog("Enter a name for the repeater tab")
         self._save_repeater_tab(tab_name)
-
-    def extensionUnloaded(self):
-        pass
